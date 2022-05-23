@@ -1,24 +1,25 @@
-import { useRef, useEffect, useState , useContext} from "react";
+import { useRef, useEffect, useState, useContext } from "react";
 import Card from "../context/context";
-import SiteSideBar from "../components/siteSideBar";
-import axios from "../api/axios";
-import DataContext from "../context/DataProvider";
 import UserContext from "../context/UserProvider";
-
+import useAuth  from '../hooks/useAuth'
+import SiteSideBar from "../components/siteSideBar";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { TIME_STAMP } from "../helpers/FormFieldValidation";
 const ACCTRANSACTION_URL = "/transactions";
-const timeStamp = new Date().toLocaleDateString();
+const UPDATE_URL = "/update";
 
 function Withdraw() {
-  const {accountData, setAccountData} = useContext(DataContext);
-  const {userData, setUserData} = useContext(UserContext);
-
+  const { userData, setUserData } = useContext(UserContext);
+  const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
   const [show, setShow] = useState(true);
   const [status, setStatus] = useState("");
+  const [email, setEmail] = useState(`${auth.email}`);
   const [amount, setAmount] = useState("");
-  const [email, setEmail] = useState("busty@gmail.com");
-  const [balance, setBalance] = useState(5555555);
-  const [transactionType, setTransactionType] = useState("Withdraw");
-  const [transactionDate, setTransactionDate] = useState(timeStamp);
+  const [balance, setBalance] = useState(userData.balance);
+  const [transactionType, setTransactionType] = useState("Deposit");
+  const [transactionDate, setTransactionDate] = useState(TIME_STAMP);
+  const [accountNumber, setaccountNumber] = useState("");
   const [accountType, setAccountType] = useState("");
   const [isDisabled, setIsdisabled] = useState(true);
   const [errMsg, setErrMsg] = useState("");
@@ -52,19 +53,19 @@ function Withdraw() {
 
     setBalance(Number(balance) - Number(amount));
 
+    let ctx = { balance: userData.balance };
+    setUserData(ctx);
+
     try {
-      const response = await axios.post(
+      const response = await axiosPrivate.post(
         ACCTRANSACTION_URL,
         JSON.stringify({
-          transactions: [
-            {
-              email: email,
+              email: `${auth.email}`,
               amount: amount,
               balance: balance,
               transactionDate: transactionDate,
               transactionType: transactionType,
-            },
-          ],
+              accountType: accountType,
         }),
         {
           headers: { "Content-Type": "application/json" },
@@ -106,7 +107,7 @@ function Withdraw() {
               status={status}
               body={
                 <>
-                  <h3>Balance: ${balance}</h3>
+                  <h3>Balance: ${userData.balance}</h3>
                   <br />
                   Withdraw Amount
                   <br />
@@ -124,21 +125,21 @@ function Withdraw() {
                   />
                   <br />
                   <label htmlFor="confirm_pwd">Account Type: ▶️</label>
-                      <select
-                        onChange={(event) => handleModeSelect(event)}
-                        name="mode"
-                        id="mode-select"
-                      >
-                        <option id="no-selection" value="">
-                          Choose Account Type 
-                        </option>
-                        <option id="checking" value="Checking">
-                          Checking
-                        </option>
-                        <option id="savings" value="Savings">
-                          Savings
-                        </option>
-                      </select>
+                  <select
+                    onChange={(event) => handleModeSelect(event)}
+                    name="mode"
+                    id="mode-select"
+                  >
+                    <option id="no-selection" value="">
+                      Choose Account Type
+                    </option>
+                    <option id="checking" value="Checking">
+                      Checking
+                    </option>
+                    <option id="savings" value="Savings">
+                      Savings
+                    </option>
+                  </select>
                   <button
                     disabled={isDisabled ? true : false}
                     type="submit"

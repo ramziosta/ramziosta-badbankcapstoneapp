@@ -1,6 +1,6 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import useAuth from "../hooks/useAuth";
-import useUserData from "../hooks/useUserData";
+import UserContext from "../context/UserProvider";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Card from "../context/context";
 import axios from "../api/axios";
@@ -10,8 +10,8 @@ const LOGIN_URL = "/auth";
 
 const Login = () => {
   const { setAuth, persist, setPersist } = useAuth();
-  const { userData, setUserData } = useUserData(); 
-   const navigate = useNavigate();
+  const { userData, setUserData } = useContext(UserContext);
+  const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/dashboard";
 
@@ -41,11 +41,10 @@ const Login = () => {
         LOGIN_URL,
         JSON.stringify({ email, pwd }),
         {
-          headers: { "Content-Type": "application/json", },
+          headers: { "Content-Type": "application/json" },
           withCredentials: true,
         }
       );
-
 
       const accessToken = response?.data?.accessToken;
       const roles = response?.data?.roles;
@@ -53,7 +52,6 @@ const Login = () => {
       setAuth({ email, pwd, roles, accessToken });
       setEmail(email);
       navigate(from, { replace: true });
-      
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'; 
 import { Routes, Route } from "react-router-dom";
 import Admin from "./components/Admin";
 import AllData from "./frontend/alldata.js";
@@ -19,6 +20,13 @@ import ROLES from "./config/roles_list";
 import "./styles/Home.css";
 
 function App() {
+
+  const [userData, setUserData] = useState({});
+  useEffect(() => {
+    const sessionData = sessionStorage.getItem('sessionContext');
+    if ( sessionData !== null ) setUserData(JSON.parse(sessionData));
+  }, []);
+
   return (
     <>
       <Routes>

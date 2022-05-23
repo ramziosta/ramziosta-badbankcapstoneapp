@@ -2,13 +2,10 @@ import { useContext } from "react";
 import { NavLink, useNavigate, useLocation,  } from "react-router-dom";
 import "../styles/siteSideBar.css";
 import useLogout from "../hooks/useLogout";
-import DataContext from "../context/DataProvider";
 import UserContext from "../context/UserProvider";
 
 export default function SiteSideBar() {
-  const {accountData, setAccountData} = useContext(DataContext);
-  const {userData, setUserData} = useContext(UserContext);
-
+  const { userData, setUserData } = useContext(UserContext);
   const location = useLocation();
   const navigate = useNavigate();
   const logout = useLogout();

@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "../api/axios";
+import UserContext from "../context/UserProvider";
 import Card from "../context/context";
 import "../styles/alldata.css";
 import SiteSideBar from "../components/siteSideBar";
@@ -9,6 +10,11 @@ import SiteSideBar from "../components/siteSideBar";
 const DATA_URL = "/users";
 
 export default function AllData() {
+  const { userData, setUserData } = useContext(UserContext);
+
+  const [user, setUser] = useState("");
+  const [email, setEmail] = useState("");
+  const [pwd, setPwd] = useState("");
   const axiosPrivate = useAxiosPrivate();
   const [users, setUsers] = useState([]);
 
@@ -42,7 +48,7 @@ export default function AllData() {
         <td className="fs-6 text-wrap">{user.user}</td>
         <td className="fs-6 text-wrap">{user.email}</td>
         <td className="fs-6 text-wrap">{user.accountType}</td>
-        <td className="fs-6 text-wrap">{user.accountNumber}</td>
+        <td className="fs-6 text-wrap">XXXX-XXXX-XXXX-{user.accountNumber}</td>
       </tr>
     );
   });
@@ -63,7 +69,7 @@ export default function AllData() {
             width: "100%",
           }}
         >
-          BadBank Clients
+          Welcome Admin:  <b style={{color:"#ed2424", margin:" 0 .5rem"}}>{userData.user} </b>
         </h4>
         <h4
           className="header"
@@ -85,16 +91,16 @@ export default function AllData() {
               <thead>
                 <tr>
                   <th className="fs-6" scope="col">
-                    User Name
+                    User Name:
                   </th>
                   <th className="fs-6" scope="col">
-                    Email
+                    Email:
                   </th>
                   <th className="fs-6" scope="col">
-                    Account Type
+                    Account Type:
                   </th>
                   <th className="fs-6" scope="col">
-                    Account
+                    Acct Num ending in:
                   </th>
                 </tr>
               </thead>

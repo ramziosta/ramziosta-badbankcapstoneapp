@@ -5,7 +5,7 @@ const User = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   pwd: { type: String, required: true },
   matchPwd: { type: String },
-  accountType: { type: String, required: true },
+  accountType: { type: String, },
   accountNumber: { type: Number, required: true },
   created: { type: Date, required: true },
   balance: { type: Number, required: true },

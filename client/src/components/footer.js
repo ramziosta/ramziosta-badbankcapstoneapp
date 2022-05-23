@@ -1,5 +1,9 @@
+import { useContext } from 'react';
+import UserContext from '../context/UserProvider';
+
 import '../styles/footer.css'
 export default function Footer() {
+  const { userData, setUserData } = useContext(UserContext);
   return (
     <>
     <div className="footer-gray footer">

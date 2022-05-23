@@ -1,21 +1,26 @@
 import { useRef, useEffect, useState, useContext } from "react";
 import Card from "../context/context";
+import UserContext from "../context/UserProvider";
+import useAuth  from '../hooks/useAuth'
 import SiteSideBar from "../components/siteSideBar";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { TIME_STAMP } from "../helpers/FormFieldValidation";
 const ACCTRANSACTION_URL = "/transactions";
-
-const timeStamp = new Date().toLocaleDateString();
+const UPDATE_URL = "/update";
 
 function Deposit() {
+  const { userData, setUserData } = useContext(UserContext);
+  const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const [show, setShow] = useState(true);
   const [status, setStatus] = useState("");
-  const [email, setEmail] = useState("peter@gmail.com");
+  const [email, setEmail] = useState(`${auth.email}`);
   const [amount, setAmount] = useState("");
-  const [balance, setBalance] = useState("");
+  const [balance, setBalance] = useState(userData.balance);
   const [transactionType, setTransactionType] = useState("Deposit");
-  const [transactionDate, setTransactionDate] = useState(timeStamp);
-  const [accountType, setAccountType] = useState("")
+  const [transactionDate, setTransactionDate] = useState(TIME_STAMP);
+  const [accountNumber, setaccountNumber] = useState("");
+  const [accountType, setAccountType] = useState("");
   const [isDisabled, setIsdisabled] = useState(true);
   const [errMsg, setErrMsg] = useState("");
 
@@ -40,26 +45,40 @@ function Deposit() {
   }, [balance]);
 
   async function handleDeposit(e) {
-  
     if (!validate(amount, "amount")) return;
 
     setBalance(Number(balance) + Number(amount));
     setShow(false);
 
+    let ctx = { "balance": userData.balance };
+    setUserData(ctx);
     try {
+      // const update = await axiosPrivate.update(
+      //   ACCTRANSACTION_URL,
+      //   JSON.stringify({
+      //       email: email,
+      //       amount: amount,
+      //       balance: balance,
+      //       transactionDate: transactionDate,
+      //       transactionType: transactionType,
+      //       accountType: accountType,
+      //   }),
+
+      //   {
+      //     headers: { "Content-Type": "application/json" },
+      //     withCredentials: true,
+      //   }
+      // );
+
       const response = await axiosPrivate.post(
         ACCTRANSACTION_URL,
         JSON.stringify({
-          transactions: 
-            {
-              email: email,
-              amount: amount,
-              balance: balance,
-              transactionDate: transactionDate,
-              transactionType: transactionType,
-              accountType: accountType,
-            },
-          
+          email: email,
+          amount: amount,
+          balance: balance,
+          transactionDate: transactionDate,
+          transactionType: transactionType,
+          accountType: accountType,
         }),
 
         {
@@ -67,7 +86,6 @@ function Deposit() {
           withCredentials: true,
         }
       );
-
     } catch (err) {
       if (!err?.response) {
         setErrMsg(alert("No Server Response"));
@@ -84,7 +102,7 @@ function Deposit() {
     console.log(userSelection);
     setAccountType(userSelection);
   };
-  
+
   function clearForm() {
     setAmount("");
     setIsdisabled(true);
@@ -104,7 +122,7 @@ function Deposit() {
               status={status}
               body={
                 <>
-                  <h3>Balance: ${balance} </h3>
+                  <h3>Balance: ${userData.balance} </h3>
                   <br />
                   Deposit Amount:
                   <br />
@@ -122,21 +140,21 @@ function Deposit() {
                   />
                   <br />
                   <label htmlFor="confirm_pwd">Account Type: ▶️</label>
-                      <select
-                        onChange={(event) => handleModeSelect(event)}
-                        name="mode"
-                        id="mode-select"
-                      >
-                        <option id="no-selection" value="">
-                          Choose Account Type 
-                        </option>
-                        <option id="checking" value="Checking">
-                          Checking
-                        </option>
-                        <option id="savings" value="Savings">
-                          Savings
-                        </option>
-                      </select>
+                  <select
+                    onChange={(event) => handleModeSelect(event)}
+                    name="mode"
+                    id="mode-select"
+                  >
+                    <option id="no-selection" value="">
+                      Choose Account Type
+                    </option>
+                    <option id="checking" value="Checking">
+                      Checking
+                    </option>
+                    <option id="savings" value="Savings">
+                      Savings
+                    </option>
+                  </select>
                   <button
                     disabled={isDisabled ? true : false}
                     type="submit"

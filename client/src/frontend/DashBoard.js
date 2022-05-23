@@ -3,17 +3,13 @@ import { useState, useEffect, useContext } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useAuth from "../hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
-import DataContext from "../context/DataProvider";
-import useUserData from "../hooks/useUserData";
+import UserContext from "../context/UserProvider";
 import Card from "../context/context";
 import "../styles/alldata.css";
 
-
-
-
 function DashBoard() {
   const { auth } = useAuth();
-  const { userData, setUserData } = useUserData();
+  const { userData, setUserData } = useContext(UserContext);
 
   const [transactions, setTransactions] = useState([]);
   const axiosPrivate = useAxiosPrivate();
@@ -51,11 +47,13 @@ function DashBoard() {
 
     const getLoggedInUser = async () => {
       try {
-        const response = await axiosPrivate.get( `/users/${auth.email}`, {
+        const response = await axiosPrivate.get(`/users/${auth.email}`, {
           signal: controller.signal,
         });
 
         isMounted && setUserData(response.data);
+
+        // sessionStorage.setItem('context', JSON.stringify(ctx));
 
       } catch (err) {
         console.error(err);
@@ -93,10 +91,11 @@ function DashBoard() {
             padding: ".4rem",
             border: "solid black 1px",
             backgroundColor: "#0079d5",
-            width: "100%",
+            width: "100%", display:"flex",
+            justifyContent:"flex-end"
           }}
         >
-          Welcome: {userData.user}
+        Welcome {' '} <b style={{color:"#ed2424", margin:" 0 .5rem"}}>{userData.user} </b>
         </h4>
         <h4
           className="header"
@@ -109,7 +108,7 @@ function DashBoard() {
             width: "100%",
           }}
         >
-          Account No. ending in: xxx-xxx-xxx-{userData.accountNumber}
+          Account No. ending in: xxxx-xxxx-xxxx-{userData.accountNumber}
         </h4>
         <h4
           className="header"

@@ -3,7 +3,6 @@ import AuthContext from "../context/AuthProvider";
 import React from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import DataContext from "../context/DataProvider";
 import UserContext from "../context/UserProvider";
 import useLogout from "../hooks/useLogout";
 import "../styles/navbar.css";
@@ -77,7 +76,6 @@ const menuItems = [
 ];
 
 function NavBar() {
-  const { accountData, setAccountData } = useContext(DataContext);
   const { userData, setUserData } = useContext(UserContext);
   const { setAuth } = useContext(AuthContext);
   const location = useLocation();

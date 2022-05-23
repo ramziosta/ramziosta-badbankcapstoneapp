@@ -1,13 +1,11 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useContext } from "react";
 import AuthContext from "../context/AuthProvider";
-import DataContext from "../context/DataProvider";
 import UserContext from "../context/UserProvider";
 import Card from "../context/context";
 import "../styles/Home.css";
 
 const Home = () => {
-  const { accountData, setAccountData } = useContext(DataContext);
   const { userData, setUserData } = useContext(UserContext);
   const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
