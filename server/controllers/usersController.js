@@ -27,6 +27,9 @@ const getUser = async (req, res) => {
 
 
 const updateBalance = async (req, res) => {
+    const cookies = req.cookies;
+    if (!cookies?.jwt) return res.sendStatus(204); //No content
+    const refreshToken = cookies.jwt;
     if (!req?.body?.email) {
         return res.status(400).json({ 'message': 'Authorized Account Email is required.' });
     }

@@ -3,6 +3,9 @@ const Transaction = require("../model/transaction.model");
 
 const handleNewTransaction = async (req, res) => {
   const { email, amount, balance, transactionDate, transactionType, accountType } = req.body;
+  const cookies = req.cookies;
+  if (!cookies?.jwt) return res.sendStatus(204); //No content
+  const refreshToken = cookies.jwt;
   try {
     const newTransaction = await Transaction.create({
           email: email,
