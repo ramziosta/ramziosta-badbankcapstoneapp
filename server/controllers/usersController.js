@@ -26,11 +26,23 @@ const getUser = async (req, res) => {
 }
 
 
+const updateBalance = async (req, res) => {
+    if (!req?.body?.email) {
+        return res.status(400).json({ 'message': 'Authorized Account Email is required.' });
+    }
+    const sessionUser = await User.findOne({ email: req.body.email }).exec();
+    if (!sessionUser) {
+        return res.status(204).json({ "message": `No ${req.body.email} found.` });
+    }
+    if (req.body?.balance) sessionUser.balance = req.body.balance;
+    const result = await sessionUser.save();
+    res.json(result);
+}
 
 module.exports = {
     getAllUsers,
     deleteUser,
     getUser,
-    
+    updateBalance,
 
 }

@@ -17,9 +17,8 @@ function Withdraw() {
   const [email, setEmail] = useState(`${auth.email}`);
   const [amount, setAmount] = useState("");
   const [balance, setBalance] = useState(userData.balance);
-  const [transactionType, setTransactionType] = useState("Deposit");
+  const [transactionType, setTransactionType] = useState("Withdraw");
   const [transactionDate, setTransactionDate] = useState(TIME_STAMP);
-  const [accountNumber, setaccountNumber] = useState("");
   const [accountType, setAccountType] = useState("");
   const [isDisabled, setIsdisabled] = useState(true);
   const [errMsg, setErrMsg] = useState("");
@@ -52,15 +51,28 @@ function Withdraw() {
     if (!validate(amount, "amount")) return;
 
     setBalance(Number(balance) - Number(amount));
+    setShow(false);
 
-    let ctx = { balance: userData.balance };
+    let ctx = { "balance": userData.balance };
     setUserData(ctx);
 
     try {
-      const response = await axiosPrivate.post(
+      const response = await axiosPrivate
+      .put(
+        UPDATE_URL,
+        JSON.stringify({
+          email: email,
+          balance: balance,
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      )
+      .post(
         ACCTRANSACTION_URL,
         JSON.stringify({
-              email: `${auth.email}`,
+              email: email,
               amount: amount,
               balance: balance,
               transactionDate: transactionDate,
@@ -81,7 +93,6 @@ function Withdraw() {
         setErrMsg(alert("TransactionFailed Failed"));
       }
     }
-    clearForm();
   }
   const handleModeSelect = (event) => {
     let userSelection = event.target.value;

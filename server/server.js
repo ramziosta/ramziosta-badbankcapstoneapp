@@ -33,7 +33,7 @@ app.use("/logout", require("./routes/logout"));
 
 //app.use(verifyJWT);
 app.use("/transactions", require("./routes/api/transaction"));
-app.use("/employees", require("./routes/api/employees"));
+app.use("/update", require("./routes/api/users"));
 app.use("/users/transactions", require("./routes/acctransactions"));
 app.use("/users", require("./routes/api/users"));
 app.use("/users/email", require("./routes/api/users"));

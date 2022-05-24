@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useContext } from "react";
 import Card from "../context/context";
 import UserContext from "../context/UserProvider";
-import useAuth  from '../hooks/useAuth'
+import useAuth from "../hooks/useAuth";
 import SiteSideBar from "../components/siteSideBar";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { TIME_STAMP } from "../helpers/FormFieldValidation";
@@ -19,7 +19,6 @@ function Deposit() {
   const [balance, setBalance] = useState(userData.balance);
   const [transactionType, setTransactionType] = useState("Deposit");
   const [transactionDate, setTransactionDate] = useState(TIME_STAMP);
-  const [accountNumber, setaccountNumber] = useState("");
   const [accountType, setAccountType] = useState("");
   const [isDisabled, setIsdisabled] = useState(true);
   const [errMsg, setErrMsg] = useState("");
@@ -50,42 +49,36 @@ function Deposit() {
     setBalance(Number(balance) + Number(amount));
     setShow(false);
 
-    let ctx = { "balance": userData.balance };
+    let ctx = { balance: userData.balance };
     setUserData(ctx);
     try {
-      // const update = await axiosPrivate.update(
-      //   ACCTRANSACTION_URL,
-      //   JSON.stringify({
-      //       email: email,
-      //       amount: amount,
-      //       balance: balance,
-      //       transactionDate: transactionDate,
-      //       transactionType: transactionType,
-      //       accountType: accountType,
-      //   }),
-
-      //   {
-      //     headers: { "Content-Type": "application/json" },
-      //     withCredentials: true,
-      //   }
-      // );
-
-      const response = await axiosPrivate.post(
-        ACCTRANSACTION_URL,
-        JSON.stringify({
-          email: email,
-          amount: amount,
-          balance: balance,
-          transactionDate: transactionDate,
-          transactionType: transactionType,
-          accountType: accountType,
-        }),
-
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      const response = await axiosPrivate
+        .put(
+          UPDATE_URL,
+          JSON.stringify({
+            email: email,
+            balance: balance,
+          }),
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          }
+        )
+        .post(
+          ACCTRANSACTION_URL,
+          JSON.stringify({
+            email: email,
+            amount: amount,
+            balance: balance,
+            transactionDate: transactionDate,
+            transactionType: transactionType,
+            accountType: accountType,
+          }),
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          }
+        );
     } catch (err) {
       if (!err?.response) {
         setErrMsg(alert("No Server Response"));
